@@ -1,0 +1,91 @@
+---
+title: "Milestone_Report"
+author: "Jerad Acosta"
+date: "March 26, 2015"
+output: html_document
+---
+
+#### Reproducible Work
+Just as in any science, reproducibility is important for many factors.   
+__Reproducibility:__
+
+* Allows others to double check your work
+* Proliferates knowledge and techniques   
+
+And most importantly for us it   
+
+* Presents insight into the processes which produced our results
+
+### Downloading the Data
+The data is from a corpus called [HC Corpora](http://www.corpora.heliohost.org/).
+You can see the [readme file](http://www.corpora.heliohost.org/aboutcorpus.html) for more information about the corpora   
+To properly allocate the data we will create directories for the original data seperate from what we make of it.
+```{r, download_data, eval=FALSE}
+# create directory for original data
+if(!file.exists("data")) {dir.create("data")}
+
+Zipurl <- c("https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip")
+
+# because url is to a zipfile we will create a temp file until we can unzip it
+temp <- tempfile()
+download.file(Zipurl, temp, method = "curl")
+# unzip only the en_US files we wish to work with
+# final/en_US/en_US.twitter.txt
+unzip(temp, files = "final/en_US/en_US.twitter.txt", exdir = "./data")
+# final/en_US/en_US.news.txt
+unzip(temp, files = "final/en_US/en_US.news.txt", exdir = "./data")
+# final/en_US/en_US.blogs.txt
+unzip(temp, files = "final/en_US/en_US.blogs.txt", exdir = "./data")
+# Unlink temp file to remove file from temporary storage
+unlink(temp)
+```
+
+### Quanitfying the Data
+We can capture **summary data** on the files themselves, such as file size.   
+For instance:
+
+* The twitter file size is `r file.info("data/final/en_US/en_US.twitter.txt")$size / 2^20`MB
+* The News file size is `r file.info("data/final/en_US/en_US.news.txt")$size / 2^20`MB 
+* The Blog file size is `r file.info("data/final/en_US/en_US.blogs.txt")$size / 2^20`MB
+
+Using the **wc** utility with options 'l','w', and 'm' we capture the line, word and character counts respectively
+```{r, engine='bash', count_twitters}
+wc -lwm data/final/en_US/en_US.twitter.txt
+```
+Thus, in the twitter file we have 2360148 lines, 30373603 words and 166816544 characters
+
+```{r, engine='bash', count_news-blog, eval=FALSE}
+wc -lwm data/final/en_US/en_US.news.txt
+wc -lwm data/final/en_US/en_US.blogs.txt
+```
+Employing the same utility we find the new files has:
+
+* 1010242 lines
+* 34372530 words
+* 205243643 characters
+
+And the Blog file has
+
+* 899288 lines
+* 37334147 words
+* 208623081 characters
+
+Here we can already begin to see some stark contrast between the corpora   
+```{r}
+matrix(c(2360148,1010242,899288,166816544,34372530,37334147,166816544,205243643,208623081),
+       nrow=3, ncol=3, dimnames = list(c("twitter","news","blogs"),
+                                       c("Lines","Words","Characters")))
+```
+Where the twitter file has more than twice as many lines and over five times the amount of words as the news file, the new file contains more characters.   
+And While the blogs and news files have similar word and character counts, their lines differ by a greater amount.   
+
+The twitter and new contrast makes sense since twitter is full of tweets which are composed of short, 140 character lines. This could be considered an indentifying trait of a twitter corpus.
+
+### Further Analysis
+
+Here we use a profanity list found at [banned word list.com](http://www.bannedwordlist.com)
+```{r,profanity_filter, eval=FALSE}
+badUrl <- c("http://www.bannedwordlist.com/lists/swearWords.txt")
+download.file(badUrl, "./data/badWords")
+```
+
