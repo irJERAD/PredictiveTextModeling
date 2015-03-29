@@ -1,10 +1,10 @@
 ---
-title: "Milestone_Report"
+title: "Milestone Report Repo"
 author: "Jerad Acosta"
 date: "March 25, 2015"
 output: html_document
 ---
-
+This is github
 ```{r set_options, echo=FALSE, cache=FALSE}
 # Remove Scientific Notation 
 # and rounded to 2 digits 
@@ -173,6 +173,8 @@ download.file(badUrl, "./data/Rdata/badWords.txt")
 ```
 
 ```{r tokenization_trials, engine='bash', cache=TRUE, eval=FALSE, echo=FALSE}
+## Tokenizing using Bash originally
+## switched to R for tokenization -- just saving this for referrence
 # check twitter with "[:alpha:]" method
 # uses -i case insensitive: YOU == You != you
 tr -cs "[A-Za-z]" "\n" < data/final/en_US/en_US.twitter.txt | sort -n -r | uniq -ci | cat > ./data/twitAZ.txt
